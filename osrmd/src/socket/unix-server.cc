@@ -21,7 +21,7 @@ void UnixServer::create()
 {
     struct sockaddr_un server_addr;
 
-    // setup socket address structure
+    // setup socket address sructure
     bzero(&server_addr,sizeof(server_addr));
     server_addr.sun_family = AF_UNIX;
     strncpy(server_addr.sun_path,socket_name_,sizeof(server_addr.sun_path) - 1);
