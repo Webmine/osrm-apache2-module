@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1454071810 source:/home/skyne/codes/OSRMd/src/socket/server.cc
+	"socket/server.h"
+
+1454072242 /home/skyne/codes/OSRMd/include//socket/server.h
+	<errno.h>
+	<netinet/in.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<unistd.h>
+	<string>
+
+1454071969 source:/home/skyne/codes/OSRMd/src/osrmd.cpp
+	"socket/unix-server.h"
+
+1454072249 /home/skyne/codes/OSRMd/include//socket/unix-server.h
+	<signal.h>
+	<stdlib.h>
+	<stdio.h>
+	<sys/un.h>
+	"server.h"
+
+1454072095 source:/home/skyne/codes/OSRMd/src/socket/unix-server.cc
+	"socket/unix-server.h"
+
