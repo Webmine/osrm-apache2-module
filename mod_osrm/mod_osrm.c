@@ -42,8 +42,42 @@
 #include "http_protocol.h"
 #include "ap_provider.h"
 #include "ap_config.h"
-#include "socket/unix-server.h"
 
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <stdio.h>
+
+
+char *communicateWithOSRMd(char* server, char* request)
+{
+    int client, servlen, bytesLenght;
+    struct sockaddr_un server_address;
+    char buffer[1024];
+
+    bzero((char *)&server_address, sizeof(server_address));
+    server_address.sun_family = AF_UNIX;
+    strcpy(server_address.sun_path, server);
+    servlen = strlen(server_address.sun_path) + sizeof(server_address.sun_family);
+
+    if((client = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+        return 0; //error creating socket
+
+    if(connect(client, (struct sockaddr *) &server_address, servlen) < 0)
+        return 0; //error connecting
+
+    bzero(buffer, 1024);
+    strncpy(request, buffer, strlen(request));
+    write(client, buffer, strlen(buffer));
+
+    bzero(buffer, 1024);
+    bytesLenght = read(client, buffer, 1024);
+    close(socket);
+
+    return buffer;
+}
 
 /*
     Configuration prototype and declaration;
@@ -85,6 +119,7 @@ static int mod_osrm_handler(request_rec *r)
     r->content_type = "text/html";
 
     if (!r->header_only)
+    {
         ap_rputs("The sample page from mod_osrm.c <br/>", r);
         ap_rputs("You requested: ",r);
         ap_rputs(r->uri,r);
@@ -98,7 +133,10 @@ static int mod_osrm_handler(request_rec *r)
         ap_rputs("<br/>",r);
         ap_rputs("Socket name: ",r);
         ap_rputs(config.osrmd_socket_path,r);
+        ap_rputs("<br/>",r);
 
+        ap_rputs(communicateWithOSRMd("/tmp/unix-socket","test string\n"),r);
+    }
 
     return OK;
 }
@@ -119,4 +157,3 @@ module AP_MODULE_DECLARE_DATA osrm_module = {
     mod_osrm_directives,   /* table of config file commands       */
     osrm_register_hooks    /* register hooks                      */
 };
-

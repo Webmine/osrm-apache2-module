@@ -8,12 +8,15 @@
 		<Build>
 			<Target title="Release">
 				<Option output="OSRMd" prefix_auto="1" extension_auto="1" />
+				<Option external_deps="/home/skyne/codes/osrm-apache2-module/osrmd/;" />
 				<Option type="0" />
 				<Option compiler="gcc" />
-				<Option projectIncludeDirsRelation="0" />
 				<Compiler>
-					<Add directory="/home/skyne/codes/OSRMd/include/" />
+					<Add directory="include" />
 				</Compiler>
+				<Linker>
+					<Add library="pthread" />
+				</Linker>
 			</Target>
 			<Target title="Debug">
 				<Option output="OSRMd" prefix_auto="1" extension_auto="1" />
@@ -25,11 +28,14 @@
 			<Add option="-Wall" />
 			<Add directory="/home/skyne/codes/OSRMd/include/" />
 		</Compiler>
+		<Unit filename="include/ClientThread.h" />
 		<Unit filename="include/socket/server.h" />
 		<Unit filename="include/socket/unix-server.h" />
+		<Unit filename="include/thread.h" />
+		<Unit filename="src/ClientThread.cpp" />
 		<Unit filename="src/osrmd.cpp" />
-		<Unit filename="src/socket/server.cc" />
-		<Unit filename="src/socket/unix-server.cc" />
+		<Unit filename="src/socket/server.cpp" />
+		<Unit filename="src/socket/unix-server.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

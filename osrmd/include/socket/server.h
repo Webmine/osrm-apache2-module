@@ -20,14 +20,15 @@ public:
     ~Server();
 
     void run();
+    string get_request(int);
+    bool send_response(int, string);
 
 protected:
     virtual void create();
     virtual void close_socket();
     void serve();
-    void handle(int);
-    string get_request(int);
-    bool send_response(int, string);
+    //void* handle(void *arg);
+
 
     int server_;
     int buflen_;

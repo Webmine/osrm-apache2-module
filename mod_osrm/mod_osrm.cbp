@@ -13,6 +13,9 @@
 				<Option compiler="null" />
 			</Target>
 		</Build>
+		<Unit filename="mod_osrm.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

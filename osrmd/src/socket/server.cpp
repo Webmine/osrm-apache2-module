@@ -1,4 +1,5 @@
 #include "socket/server.h"
+#include "ClientThread.h"
 #include <iostream>
 
 Server::Server()
@@ -38,59 +39,48 @@ void Server::serve()
       // accept clients
     while ((client = accept(server_,(struct sockaddr *)&client_addr,&clientlen)) > 0)
     {
-        handle(client);
+        cout << "DEBUG: New client" << client;
+
+        ClientThread* thread = new ClientThread(this,client);
+        thread->StartInternalThread();
     }
 
     close_socket();
 }
 
-void Server::handle(int client)
+void *handle(void *arg)
 {
-    // loop to handle all requests
-    while (1)
-    {
-        // get a request
-        string request = get_request(client);
-        // break if client is done or an error occurred
-        if (request.empty())
-            break;
 
-        std::cout << request;
 
-        // send response
-        bool success = send_response(client,request);
-        // break if an error occurred
-        if (not success)
-            break;
-    }
-    close(client);
 }
 
 string Server::get_request(int client)
 {
     string request = "";
     // read until we get a newline
-    while (request.find("\n") == string::npos)
-    {
+    //while (request.find("\0") == string::npos)
+    //{
         int nread = recv(client,buf_,1024,0);
 
         if (nread < 0)
         {
-            if (errno == EINTR)
+            //if (errno == EINTR)
                 // the socket call was interrupted -- try again
-                continue;
-            else
+            //    continue;
+            //else
                 // an error occurred, so break out
+                cout << "DEBUG: connection closed" << client;
                 return "";
         }
         else if (nread == 0)
         {
             // the socket is closed
+            cout << "DEBUG: connection closed" << client;
             return "";
         }
         // be sure to use append in case we have binary data
         request.append(buf_,nread);
-    }
+    //}
     // a better server would cut off anything after the newline and
     // save it in a cache
     return request;
