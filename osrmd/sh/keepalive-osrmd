@@ -1,0 +1,5 @@
+#! /bin/bash
+while true
+do
+   osrmd 1>> /var/log/osrmd.log 2>&1
+done
