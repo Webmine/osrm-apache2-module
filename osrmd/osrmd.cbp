@@ -22,20 +22,29 @@
 				<Option output="OSRMd" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="include" />
+				</Compiler>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="/home/skyne/codes/OSRMd/include/" />
 		</Compiler>
+		<Unit filename="include/BaseThread.h" />
 		<Unit filename="include/ClientThread.h" />
-		<Unit filename="include/socket/server.h" />
-		<Unit filename="include/socket/unix-server.h" />
-		<Unit filename="include/thread.h" />
+		<Unit filename="include/ini-reader/INIReader.h" />
+		<Unit filename="include/ini-reader/ini.h" />
+		<Unit filename="include/socket/Server.h" />
+		<Unit filename="include/socket/UnixServer.h" />
 		<Unit filename="src/ClientThread.cpp" />
+		<Unit filename="src/ini-reader/INIReader.cpp" />
+		<Unit filename="src/ini-reader/ini.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/osrmd.cpp" />
-		<Unit filename="src/socket/server.cpp" />
-		<Unit filename="src/socket/unix-server.cpp" />
+		<Unit filename="src/socket/Server.cpp" />
+		<Unit filename="src/socket/UnixServer.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

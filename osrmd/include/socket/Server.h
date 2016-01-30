@@ -8,10 +8,13 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
 #include <string>
+#include <queue>
+
+#include "BaseThread.h"
 
 using namespace std;
+
 
 class Server
 {
@@ -22,14 +25,14 @@ public:
     void run();
     string get_request(int);
     bool send_response(int, string);
+    void OnThreadFinished(BaseThread* thread);
 
 protected:
     virtual void create();
     virtual void close_socket();
     void serve();
-    //void* handle(void *arg);
 
-
+    queue<BaseThread*> idleThreads;
     int server_;
     int buflen_;
     char* buf_;

@@ -1,4 +1,4 @@
-#include "socket/server.h"
+#include "socket/Server.h"
 #include "ClientThread.h"
 #include <iostream>
 
@@ -7,6 +7,12 @@ Server::Server()
     // setup variables
     buflen_ = 1024;
     buf_ = new char[buflen_+1];
+
+    int numThreads = 10;
+    for(int i = 0; i < numThreads; i++)
+    {
+        idleThreads.push((BaseThread*)new ClientThread(this));
+    }
 }
 
 Server::~Server()
@@ -41,17 +47,23 @@ void Server::serve()
     {
         cout << "DEBUG: New client" << client;
 
-        ClientThread* thread = new ClientThread(this,client);
-        thread->StartInternalThread();
+        if(idleThreads.size() > 0)
+        {
+            ClientThread* worker = (ClientThread*)idleThreads.front();
+            idleThreads.pop();
+            worker->Prepare(client);
+            worker->StartInternalThread();
+        }
+        //TODO: else maybe queue the clients?
     }
 
     close_socket();
 }
 
-void *handle(void *arg)
+void Server::OnThreadFinished(BaseThread* thread)
 {
-
-
+   ((ClientThread*)thread)->Reset();
+   idleThreads.push(thread);
 }
 
 string Server::get_request(int client)

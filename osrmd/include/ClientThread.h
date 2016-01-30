@@ -1,14 +1,17 @@
 #ifndef CLIENTTHREAD_H_INCLUDED
 #define CLIENTTHREAD_H_INCLUDED
 
-#include "thread.h"
-#include "socket/server.h"
+#include "BaseThread.h"
+#include "socket/Server.h"
 
-class ClientThread : public MyThreadClass
+
+class ClientThread : public BaseThread
 {
 public:
-    ClientThread(Server* server, int& client);
+    ClientThread(Server* server);
     ~ClientThread();
+    void Prepare(int& newClient);
+    void Reset();
     void InternalThreadEntry();
 
 private:

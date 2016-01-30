@@ -4,11 +4,11 @@
 
 #include <pthread.h>
 
-class MyThreadClass
+class BaseThread
 {
 public:
-   MyThreadClass() {/* empty */}
-   virtual ~MyThreadClass() {/* empty */}
+   BaseThread() {/* empty */}
+   virtual ~BaseThread() {/* empty */}
 
    /** Returns true if the thread was successfully started, false if there was an error starting the thread */
    bool StartInternalThread()
@@ -27,7 +27,7 @@ protected:
    virtual void InternalThreadEntry() = 0;
 
 private:
-   static void * InternalThreadEntryFunc(void * This) {((MyThreadClass *)This)->InternalThreadEntry(); return NULL;}
+   static void * InternalThreadEntryFunc(void * This) {((BaseThread *)This)->InternalThreadEntry(); return NULL;}
 
    pthread_t _thread;
 };
