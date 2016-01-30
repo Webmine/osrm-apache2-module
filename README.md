@@ -4,7 +4,14 @@
 
 ## Licence ##
 
-## Installation ##
+## Installing ##
+
+The latest source code is available in the OSRM Apache2 Module git repository on github
+and can be downloaded as follows:
+
+```sh
+$ git clone https://github.com/Webmine/osrm-apache2-module.git
+```
 
 ## Building ##
 
