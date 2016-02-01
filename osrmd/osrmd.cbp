@@ -40,7 +40,12 @@
 		<Unit filename="include/ClientThread.h" />
 		<Unit filename="include/ini-reader/INIReader.h" />
 		<Unit filename="include/ini-reader/ini.h" />
+<<<<<<< HEAD
 		<Unit filename="include/json.h" />
+=======
+		<Unit filename="include/logger/log.h" />
+		<Unit filename="include/logger/macro_define.h" />
+>>>>>>> 9f2a6efd88b52e679d7657349cd5d20cfdc2ad99
 		<Unit filename="include/socket/Server.h" />
 		<Unit filename="include/socket/UnixServer.h" />
 		<Unit filename="src/ClientThread.cpp" />
@@ -48,6 +53,7 @@
 		<Unit filename="src/ini-reader/ini.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/logger/log.cpp" />
 		<Unit filename="src/osrmd.cpp" />
 		<Unit filename="src/socket/Server.cpp" />
 		<Unit filename="src/socket/UnixServer.cpp" />

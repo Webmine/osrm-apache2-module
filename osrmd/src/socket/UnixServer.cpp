@@ -1,20 +1,17 @@
 #include "socket/UnixServer.h"
+#include "logger/log.h"
 
-const char* UnixServer::socket_name_ = "/tmp/unix-socket";
+//const char* UnixServer::socket_name_ = "asd";
 
-UnixServer::UnixServer()
+UnixServer::UnixServer(std::string socket_name)
+: socket_name(socket_name.c_str())
 {
-    // setup handler for Control-C so we can properly unlink the UNIX
-    // socket when that occurs
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = interrupt;
-    sigemptyset(&sigIntHandler.sa_mask);
-    sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
+
 }
 
 UnixServer::~UnixServer()
 {
+    unlink(socket_name);
 }
 
 void UnixServer::create()
@@ -24,20 +21,20 @@ void UnixServer::create()
     // setup socket address sructure
     bzero(&server_addr,sizeof(server_addr));
     server_addr.sun_family = AF_UNIX;
-    strncpy(server_addr.sun_path,socket_name_,sizeof(server_addr.sun_path) - 1);
+    strncpy(server_addr.sun_path,socket_name,sizeof(server_addr.sun_path) - 1);
 
     // create socket
     server_ = socket(PF_UNIX,SOCK_STREAM,0);
     if (!server_)
     {
-        perror("socket");
+        LOG_ERROR("socket");
         exit(-1);
     }
 
     // call bind to associate the socket with the UNIX file system
     if (bind(server_,(const struct sockaddr *)&server_addr,sizeof(server_addr)) < 0)
     {
-        perror("bind");
+        LOG_ERROR("bind");
         exit(-1);
     }
 
@@ -51,10 +48,5 @@ void UnixServer::create()
 
 void UnixServer::close_socket()
 {
-    unlink(socket_name_);
-}
-
-void UnixServer::interrupt(int)
-{
-    unlink(socket_name_);
+    unlink(socket_name);
 }

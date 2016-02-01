@@ -20,9 +20,9 @@ class Server
 {
 public:
     Server();
-    ~Server();
+    virtual ~Server();
 
-    void run();
+    void run(int pool_size);
     string get_request(int);
     bool send_response(int, string);
     void OnThreadFinished(BaseThread* thread);
@@ -38,5 +38,6 @@ protected:
     pthread_mutex_t mtx2 = PTHREAD_MUTEX_INITIALIZER; //mutex for clientqueue lock
     int server_;
     int buflen_;
+    int pool_size_;
     char* buf_;
 };

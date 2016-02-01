@@ -11,15 +11,13 @@ class UnixServer : public Server
 {
 
 public:
-    UnixServer();
+    UnixServer(std::string socket_name);
     ~UnixServer();
+    void close_socket();
 
 protected:
     void create();
-    void close_socket();
 
 private:
-    static void interrupt(int);
-
-    static const char* socket_name_;
+    const char* socket_name;
 };
