@@ -1,4 +1,5 @@
 #include "socket/UnixServer.h"
+#include "logger/log.h"
 
 //const char* UnixServer::socket_name_ = "asd";
 
@@ -26,14 +27,14 @@ void UnixServer::create()
     server_ = socket(PF_UNIX,SOCK_STREAM,0);
     if (!server_)
     {
-        perror("socket");
+        LOG_ERROR("socket");
         exit(-1);
     }
 
     // call bind to associate the socket with the UNIX file system
     if (bind(server_,(const struct sockaddr *)&server_addr,sizeof(server_addr)) < 0)
     {
-        perror("bind");
+        LOG_ERROR("bind");
         exit(-1);
     }
 

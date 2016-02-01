@@ -1,6 +1,7 @@
 #include "socket/Server.h"
 #include "ClientThread.h"
 #include <iostream>
+#include "logger/log.h"
 
 Server::Server()
 {
@@ -58,8 +59,8 @@ void Server::serve()
             waitingClients.push(client);
         }
 
-        //cout << "DEBUG: Available workers: " << idleThreads.size();
-        //cout << "DEBUG: Client queue: " << waitingClients.size();
+        LOG_DEBUG("Available workers: %d", idleThreads.size());
+        LOG_DEBUG("Client queue: %d", waitingClients.size());
     }
 
     close_socket();
@@ -69,8 +70,7 @@ void Server::OnThreadFinished(BaseThread* thread)
 {
     ClientThread* worker = ((ClientThread*)thread);
 
-    cout << "Worker "<< worker->threadNum <<" finished \n";
-
+    LOG_DEBUG("Worker %d finished", worker->threadNum);
 
     worker->Reset();
 
@@ -78,29 +78,29 @@ void Server::OnThreadFinished(BaseThread* thread)
     int waiting = waitingClients.size();
     pthread_mutex_unlock(&mtx);
 
-    cout << "Client queue length: " << waiting << "\n";
+    LOG_DEBUG("Client queue length: %d", waiting);
 
     //if there is client waiting for free worker assign this thread to it
     if(waiting > 0)
     {
-        cout << "Worker "<< worker->threadNum <<" is going to work with queued client \n";
+        LOG_DEBUG("Worker %d is going to work with queued client", worker->threadNum);
 
         pthread_mutex_lock(&mtx2);
-        cout << "Worker "<< worker->threadNum <<" locked the mutex\n";
+        LOG_DEBUG("Worker %d locked the mutex", worker->threadNum);
         int client = waitingClients.front();
-        cout << "Worker "<< worker->threadNum <<" got a client\n";
+        LOG_DEBUG("Worker %d got a client", worker->threadNum);
         waitingClients.pop();
-        cout << "Worker "<< worker->threadNum <<" removed client from queue\n";
+        LOG_DEBUG("Worker %d removed client from queue", worker->threadNum);
         pthread_mutex_unlock(&mtx2);
 
-        cout << "Worker "<< worker->threadNum <<" assigned to client: " << client << "\n";
+        LOG_DEBUG("Worker %d assigned to client: %d", worker->threadNum, client);
 
         worker->Prepare(client);
         worker->StartInternalThread();
     }
     else // if no more clients waiting, put this thread back to the pool
     {
-        cout << "Worker "<< worker->threadNum <<" is now free" << "\n";
+        LOG_DEBUG("Worker %d is now free", worker->threadNum);
         idleThreads.push(thread);
     }
 }
@@ -147,7 +147,7 @@ bool Server::send_response(int client, string response)
             else
             {
                 // an error occurred, so break out
-                perror("write");
+                LOG_ERROR("write error");
                 return false;
             }
         }
