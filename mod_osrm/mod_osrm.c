@@ -69,7 +69,7 @@ char *communicateWithOSRMd(char* server, char* request)
         return 0; //error connecting
 
     bzero(buffer, 1024);
-    strncpy(request, buffer, strlen(request));
+    strncpy(buffer, request, sizeof(buffer));
     write(client, buffer, strlen(buffer));
 
     bzero(buffer, 1024);
@@ -135,7 +135,7 @@ static int mod_osrm_handler(request_rec *r)
         ap_rputs(config.osrmd_socket_path,r);
         ap_rputs("<br/>",r);
 
-        ap_rputs(communicateWithOSRMd("/tmp/unix-socket","test string\n"),r);
+        ap_rputs(communicateWithOSRMd("/tmp/unix-socket","test string"),r);
     }
 
     return OK;

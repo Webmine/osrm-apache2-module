@@ -54,6 +54,10 @@ void Server::serve()
             worker->Prepare(client);
             worker->StartInternalThread();
         }
+        else
+        {
+            waitingClients.push(client);
+        }
         //TODO: else maybe queue the clients?
     }
 
@@ -62,39 +66,43 @@ void Server::serve()
 
 void Server::OnThreadFinished(BaseThread* thread)
 {
-   ((ClientThread*)thread)->Reset();
-   idleThreads.push(thread);
+    ClientThread* worker = ((ClientThread*)thread);
+    worker->Reset();
+
+    //if there is client waiting for free workerm assign this thread to it
+    if(waitingClients.size() > 0)
+    {
+        int client = waitingClients.front();
+        waitingClients.pop();
+        worker->Prepare(client);
+        worker->StartInternalThread();
+    }
+    else // if no more clients waiting, put this thread back to the pool
+    {
+        idleThreads.push(thread);
+    }
 }
 
 string Server::get_request(int client)
 {
     string request = "";
-    // read until we get a newline
-    //while (request.find("\0") == string::npos)
-    //{
-        int nread = recv(client,buf_,1024,0);
 
-        if (nread < 0)
-        {
-            //if (errno == EINTR)
-                // the socket call was interrupted -- try again
-            //    continue;
-            //else
-                // an error occurred, so break out
-                cout << "DEBUG: connection closed" << client;
-                return "";
-        }
-        else if (nread == 0)
-        {
-            // the socket is closed
-            cout << "DEBUG: connection closed" << client;
-            return "";
-        }
-        // be sure to use append in case we have binary data
-        request.append(buf_,nread);
-    //}
-    // a better server would cut off anything after the newline and
-    // save it in a cache
+    int nread = recv(client,buf_,1024,0);
+
+    if (nread < 0)
+    {
+        cout << "DEBUG: connection closed" << client;
+        return "";
+    }
+    else if (nread == 0)
+    {
+        // the socket is closed
+        cout << "DEBUG: connection closed" << client;
+        return "";
+    }
+    // be sure to use append in case we have binary data
+    request.append(buf_,nread);
+
     return request;
 }
 

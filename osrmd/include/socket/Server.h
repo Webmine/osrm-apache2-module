@@ -33,6 +33,7 @@ protected:
     void serve();
 
     queue<BaseThread*> idleThreads;
+    queue<int> waitingClients;
     int server_;
     int buflen_;
     char* buf_;

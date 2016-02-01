@@ -27,14 +27,12 @@ void ClientThread::InternalThreadEntry()
     //{
         // get a request
         string request = server->get_request(client);
-        // break if client is done or an error occurred
-        if (!request.empty())
-        {
-
         std::cout << "DEBUG: Incoming:" << request;
 
-        // send response
-        bool success = server->send_response(client,request);
+        if (!request.empty())
+        {
+            // send response
+            bool success = server->send_response(client,request);
         }
     //}
     close(client);
