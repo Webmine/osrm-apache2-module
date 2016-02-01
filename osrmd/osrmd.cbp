@@ -7,14 +7,17 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="bin/release/osrmd" prefix_auto="1" extension_auto="1" />				
+				<Option output="bin/release/osrmd" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add library="pthread" />
+					<Add library="osrm" />
+					<Add library="boost_system" />
 				</Linker>
 			</Target>
 			<Target title="Debug">
@@ -26,6 +29,7 @@
 				</Compiler>
 				<Linker>
 					<Add library="pthread" />
+					<Add library="osrm" />
 				</Linker>
 			</Target>
 		</Build>
@@ -36,6 +40,7 @@
 		<Unit filename="include/ClientThread.h" />
 		<Unit filename="include/ini-reader/INIReader.h" />
 		<Unit filename="include/ini-reader/ini.h" />
+		<Unit filename="include/json.h" />
 		<Unit filename="include/socket/Server.h" />
 		<Unit filename="include/socket/UnixServer.h" />
 		<Unit filename="src/ClientThread.cpp" />

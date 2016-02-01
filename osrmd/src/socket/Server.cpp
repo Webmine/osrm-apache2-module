@@ -1,6 +1,7 @@
 #include "socket/Server.h"
 #include "ClientThread.h"
 #include <iostream>
+#include "osrm/osrm.hpp"
 
 Server::Server()
 {
