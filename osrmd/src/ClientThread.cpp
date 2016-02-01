@@ -1,9 +1,10 @@
 #include "ClientThread.h"
 #include <iostream>
 
-ClientThread::ClientThread(Server* server)
+ClientThread::ClientThread(Server* server, int number)
 {
     this->server = server;
+    this->threadNum = number;
 }
 
 ClientThread::~ClientThread()
@@ -27,7 +28,7 @@ void ClientThread::InternalThreadEntry()
     //{
         // get a request
         string request = server->get_request(client);
-        std::cout << "DEBUG: Incoming:" << request;
+        //std::cout << "DEBUG: Incoming:" << request;
 
         if (!request.empty())
         {
