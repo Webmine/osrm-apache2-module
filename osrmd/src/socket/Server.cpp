@@ -4,15 +4,7 @@
 
 Server::Server()
 {
-    // setup variables
-    buflen_ = 1024;
-    buf_ = new char[buflen_+1];
 
-    int numThreads = 10;
-    for(int i = 0; i < numThreads; i++)
-    {
-        idleThreads.push((BaseThread*)new ClientThread(this, i));
-    }
 }
 
 Server::~Server()
@@ -20,8 +12,16 @@ Server::~Server()
     delete buf_;
 }
 
-void Server::run()
+void Server::run(int pool_size)
 {
+    // setup variables
+    buflen_ = 1024;
+    buf_ = new char[buflen_+1];
+
+    for(int i = 0; i < pool_size; i++)
+    {
+        idleThreads.push((BaseThread*)new ClientThread(this, i));
+    }
     // create and run the server
     create();
     serve();

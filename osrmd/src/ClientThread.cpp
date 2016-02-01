@@ -32,8 +32,7 @@ void ClientThread::InternalThreadEntry()
 
         if (!request.empty())
         {
-            // send response
-            bool success = server->send_response(client,request);
+            server->send_response(client,request);
         }
     //}
     close(client);
