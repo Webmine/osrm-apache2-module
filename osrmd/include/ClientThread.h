@@ -8,11 +8,13 @@
 class ClientThread : public BaseThread
 {
 public:
-    ClientThread(Server* server);
+    ClientThread(Server* server, int number);
     ~ClientThread();
     void Prepare(int& newClient);
     void Reset();
     void InternalThreadEntry();
+
+    int threadNum;
 
 private:
     Server* server;

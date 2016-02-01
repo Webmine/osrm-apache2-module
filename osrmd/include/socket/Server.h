@@ -34,6 +34,8 @@ protected:
 
     queue<BaseThread*> idleThreads;
     queue<int> waitingClients;
+    pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER; //mutex for clientqueue lock
+    pthread_mutex_t mtx2 = PTHREAD_MUTEX_INITIALIZER; //mutex for clientqueue lock
     int server_;
     int buflen_;
     char* buf_;
