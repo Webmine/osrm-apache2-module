@@ -8,6 +8,7 @@
 		<Build>
 			<Target title="Release">
 				<Option output="bin/release/osrmd" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/release/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -25,10 +26,12 @@
 			</Target>
 			<Target title="Debug">
 				<Option output="bin/debug/osrmd" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/debug/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-std=c++11" />
+					<Add option="-g" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
@@ -63,7 +66,9 @@
 		<Unit filename="src/socket/UnixServer.cpp" />
 		<Extensions>
 			<code_completion />
-			<debugger />
+			<debugger>
+				<search_path add="bin/debug" />
+			</debugger>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
