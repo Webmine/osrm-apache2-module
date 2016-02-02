@@ -34,11 +34,16 @@ int main(int argc, char **argv)
     }
 
     // read config vaules
+    // logger
     int log_level = reader.GetInteger("log","level",4); //default = warn
     string log_file = reader.Get("log","file_name","osrmd");
     string log_dir = reader.Get("log","directory","./log");
+    // socket
     string socket_name = reader.Get("socket","name","/tmp/unix-socket");
+    // threading
     int thread_pool_size = reader.GetInteger("threading","pool_size",10);
+    // osrm
+    string osrm_file_name = reader.Get("osrm","file_name","UNDEFINED");
 
     // init logger
     log_init((LogLevel)log_level, log_file.c_str(), log_dir.c_str());
