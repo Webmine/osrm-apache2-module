@@ -18,6 +18,9 @@
 					<Add library="pthread" />
 					<Add library="osrm" />
 					<Add library="boost_system" />
+					<Add library="boost_filesystem" />
+					<Add library="boost_thread" />
+					<Add library="librt" />
 				</Linker>
 			</Target>
 			<Target title="Debug">
@@ -25,11 +28,16 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add library="pthread" />
 					<Add library="osrm" />
+					<Add library="boost_system" />
+					<Add library="boost_filesystem" />
+					<Add library="boost_thread" />
+					<Add library="librt" />
 				</Linker>
 			</Target>
 		</Build>
@@ -40,12 +48,8 @@
 		<Unit filename="include/ClientThread.h" />
 		<Unit filename="include/ini-reader/INIReader.h" />
 		<Unit filename="include/ini-reader/ini.h" />
-<<<<<<< HEAD
-		<Unit filename="include/json.h" />
-=======
 		<Unit filename="include/logger/log.h" />
 		<Unit filename="include/logger/macro_define.h" />
->>>>>>> 9f2a6efd88b52e679d7657349cd5d20cfdc2ad99
 		<Unit filename="include/socket/Server.h" />
 		<Unit filename="include/socket/UnixServer.h" />
 		<Unit filename="src/ClientThread.cpp" />
