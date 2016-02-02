@@ -12,6 +12,10 @@
 #include <queue>
 
 #include "BaseThread.h"
+#include "osrm/engine_config.hpp"
+
+using namespace osrm;
+using namespace osrm::engine;
 
 using namespace std;
 
@@ -22,7 +26,7 @@ public:
     Server();
     virtual ~Server();
 
-    void run(int pool_size);
+    void run(int pool_size, EngineConfig& config);
     string get_request(int);
     bool send_response(int, string);
     void OnThreadFinished(BaseThread* thread);
