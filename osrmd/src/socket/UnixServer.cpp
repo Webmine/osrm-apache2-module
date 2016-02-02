@@ -1,8 +1,6 @@
 #include "socket/UnixServer.h"
 #include "logger/log.h"
 
-//const char* UnixServer::socket_name_ = "asd";
-
 UnixServer::UnixServer(std::string socket_name)
 : socket_name(socket_name.c_str())
 {
