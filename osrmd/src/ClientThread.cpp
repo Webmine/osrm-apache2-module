@@ -35,7 +35,6 @@ void ClientThread::InternalThreadEntry()
 {
 
         // get a request
-<<<<<<< HEAD
     string request = server->get_request(client);
 
     if (!request.empty())
@@ -64,16 +63,6 @@ void ClientThread::InternalThreadEntry()
         //bool success = server->send_response(client,j_umap);
     }
 
-=======
-        string request = server->get_request(client);
-        //std::cout << "DEBUG: Incoming:" << request;
-
-        if (!request.empty())
-        {
-            server->send_response(client,request);
-        }
-    //}
->>>>>>> 9f2a6efd88b52e679d7657349cd5d20cfdc2ad99
     close(client);
     server->OnThreadFinished((BaseThread*)this);
 }
