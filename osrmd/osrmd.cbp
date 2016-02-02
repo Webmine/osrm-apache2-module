@@ -3,10 +3,11 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="osrmd" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Release">
+			<Target title="release">
 				<Option output="bin/release/osrmd" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/release/" />
 				<Option type="1" />
@@ -24,7 +25,7 @@
 					<Add library="librt" />
 				</Linker>
 			</Target>
-			<Target title="Debug">
+			<Target title="debug">
 				<Option output="bin/debug/osrmd" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/debug/" />
 				<Option type="1" />

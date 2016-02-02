@@ -18,6 +18,9 @@ LIBDIR =
 LIB = 
 LDFLAGS = 
 
+MAKE_PID := $(shell echo $$PPID)
+JOB_FLAG := $(filter -j%, $(subst -j ,-j,$(shell ps T | grep "^\s*$(MAKE_PID).*$(MAKE)")))
+
 INC_RELEASE = $(INC) -Iinclude
 CFLAGS_RELEASE = $(CFLAGS) -std=c++11
 RESINC_RELEASE = $(RESINC)
@@ -28,6 +31,8 @@ LDFLAGS_RELEASE = $(LDFLAGS)
 OBJDIR_RELEASE = .objs
 DEP_RELEASE = 
 OUT_RELEASE = bin/release/osrmd
+OSRM_OUT_DIR_RELEASE = osrm-backend/build/release
+
 
 INC_DEBUG = $(INC) -Iinclude
 CFLAGS_DEBUG = $(CFLAGS) -std=c++11 -g
@@ -39,6 +44,8 @@ LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = .objs
 DEP_DEBUG = 
 OUT_DEBUG = bin/debug/osrmd
+OSRM_OUT_DIR_DEBUG = osrm-backend/build/debug
+
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/src/ClientThread.o $(OBJDIR_RELEASE)/src/ini-reader/INIReader.o $(OBJDIR_RELEASE)/src/ini-reader/ini.o $(OBJDIR_RELEASE)/src/logger/log.o $(OBJDIR_RELEASE)/src/osrmd.o $(OBJDIR_RELEASE)/src/socket/Server.o $(OBJDIR_RELEASE)/src/socket/UnixServer.o
 
@@ -46,13 +53,13 @@ OBJ_DEBUG = $(OBJDIR_DEBUG)/src/ClientThread.o $(OBJDIR_DEBUG)/src/ini-reader/IN
 
 .ONESHELL:
 osrm_debug:
-	test -d osrm-backend/build/release || mkdir -p osrm-backend/build/debug
-	(cd osrm-backend/build/release ; cmake ../.. -DCMAKE_BUILD_TYPE=Debug ; cmake --build .)
+	test -d $(OSRM_OUT_DIR_DEBUG) || mkdir -p $(OSRM_OUT_DIR_DEBUG)
+	(cd $(OSRM_OUT_DIR_DEBUG) ; cmake ../.. -DCMAKE_BUILD_TYPE=Debug ; make $(JOB_FLAG))
 
 .ONESHELL:
 osrm_release:
-	test -d osrm-backend/build/release || mkdir -p osrm-backend/build/release
-	(cd osrm-backend/build/release ; cmake ../.. -DCMAKE_BUILD_TYPE=Release ; cmake --build .)
+	test -d $(OSRM_OUT_DIR_RELEASE) || mkdir -p $(OSRM_OUT_DIR_RELEASE)
+	(cd $(OSRM_OUT_DIR_RELEASE) ; cmake ../.. -DCMAKE_BUILD_TYPE=Release ; make $(JOB_FLAG))
 
 all: release debug
 
@@ -100,6 +107,7 @@ cleanrelease:
 	rm -rf $(OBJDIR_RELEASE)/src/ini-reader
 	rm -rf $(OBJDIR_RELEASE)/src/logger
 	rm -rf $(OBJDIR_RELEASE)/src/socket
+	rm -rf $(OSRM_OUT_DIR_RELEASE)
 
 before_debug: 
 	test -d bin/debug || mkdir -p bin/debug
@@ -110,7 +118,7 @@ before_debug:
 
 after_debug: 
 
-debug: before_debug out_debug after_debug
+debug: osrm_debug before_debug out_debug after_debug
 
 out_debug: before_debug $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) -o $(OUT_DEBUG) $(OBJ_DEBUG)  $(LDFLAGS_DEBUG) $(LIB_DEBUG)
@@ -143,6 +151,7 @@ cleandebug:
 	rm -rf $(OBJDIR_DEBUG)/src/ini-reader
 	rm -rf $(OBJDIR_DEBUG)/src/logger
 	rm -rf $(OBJDIR_DEBUG)/src/socket
+	rm -rf $(OSRM_OUT_DIR_DEBUG)
 
 .PHONY: before_release after_release clean_release before_debug after_debug clean_debug
 
