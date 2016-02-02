@@ -1,6 +1,5 @@
 #include "ClientThread.h"
 #include "osrm_config_helper.h"
-#include "osrm/engine_config.hpp"
 #include "osrm/osrm.hpp"
 #include "osrm/route_parameters.hpp"
 #include "osrm/util/coordinate.hpp"
@@ -12,13 +11,10 @@ using namespace osrm;
 using namespace osrm::engine;
 using JSON = nlohmann::json;
 
-ClientThread::ClientThread(Server* server, int number)
+ClientThread::ClientThread(Server* server, int number, EngineConfig& config)
 {
     this->server = server;
     this->threadNum = number;
-    EngineConfig config = EngineConfig();
-    config.server_paths = populate_server_paths("");
-    config.use_shared_memory = false;
     this->osrmEngine = new OSRM(config);
 }
 
@@ -56,9 +52,9 @@ void ClientThread::InternalThreadEntry()
 
         osrm::json::Object json_result;
         const int result_code = osrmEngine->RunQuery(route_parameters, json_result);
-        //auto asd = json_result.values;
+        auto asd = json_result.values;
 
-        //std::cout << typeid(asd).name();
+        std::cout << typeid(asd).name();
 
         //JSON j_umap();
 

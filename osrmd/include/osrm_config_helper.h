@@ -6,10 +6,8 @@
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
-inline std::unordered_map<std::string,boost::filesystem::path> populate_server_paths(std::string base_path)
+inline int populate_server_paths(std::string base_path, std::unordered_map<std::string,boost::filesystem::path>& server_paths)
 {
-    std::unordered_map<std::string,boost::filesystem::path> server_paths;
-
     server_paths["hsgrdata"] = base_path + ".hsgr";
     server_paths["nodesdata"] = base_path + ".nodes";
     server_paths["coredata"] = base_path + ".core";
@@ -20,13 +18,19 @@ inline std::unordered_map<std::string,boost::filesystem::path> populate_server_p
     server_paths["namesdata"] = base_path + ".names";
     server_paths["timestamp"] = base_path + ".timestamp";
 
+    bool hasErrors = false;
     for(auto it = server_paths.begin(); it != server_paths.end(); ++it)
     {
-        if(!boost::filesystem::is_regular_file(it->second))
+        if(!boost::filesystem::is_regular_file(boost::filesystem::canonical(it->second)))
         {
             LOG_ERROR("File not exists %s", it->second.string().c_str());
+            hasErrors = true;
         }
     }
+    if(hasErrors)
+        return 1;
+    else
+        return 0;
 }
 
 #endif // OSRM_CONFIG_HELPER_H_INCLUDED

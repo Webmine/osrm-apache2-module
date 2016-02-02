@@ -14,7 +14,7 @@ Server::~Server()
     delete buf_;
 }
 
-void Server::run(int pool_size)
+void Server::run(int pool_size, EngineConfig& config)
 {
     // setup variables
     buflen_ = 1024;
@@ -22,7 +22,7 @@ void Server::run(int pool_size)
 
     for(int i = 0; i < pool_size; i++)
     {
-        idleThreads.push((BaseThread*)new ClientThread(this, i));
+        idleThreads.push((BaseThread*)new ClientThread(this, i, config));
     }
     // create and run the server
     create();

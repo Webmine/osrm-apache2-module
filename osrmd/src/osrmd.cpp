@@ -1,6 +1,8 @@
 #include "socket/UnixServer.h"
 #include "ini-reader/INIReader.h"
 #include "logger/log.h"
+#include "osrm_config_helper.h"
+#include "osrm/engine_config.hpp"
 #include <string>
 #include <iostream>
 
@@ -58,8 +60,17 @@ int main(int argc, char **argv)
 
     */
 
+    LOG_NOTICE("USING OSRM FILE: %s", osrm_file_name.c_str());
+
+    EngineConfig config = EngineConfig();
+
+    if(populate_server_paths(osrm_file_name, config.server_paths) == 1)
+        return 1;
+
+    config.use_shared_memory = false;
+
     server = new UnixServer(socket_name);
-    server->run(thread_pool_size);
+    server->run(thread_pool_size, config);
 
     delete server;
 }
