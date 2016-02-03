@@ -2,7 +2,7 @@
 #include "osrm_config_helper.h"
 #include "osrm/osrm.hpp"
 #include "osrm/route_parameters.hpp"
-#include "osrm/util/coordinate.hpp"
+#include "util/coordinate.hpp"
 #include "osrm/json_container.hpp"
 #include "json.h"
 #include <iostream>

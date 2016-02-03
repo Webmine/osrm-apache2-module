@@ -15,36 +15,36 @@ INC =
 CFLAGS = -Wall
 RESINC = 
 LIBDIR = 
-LIB = 
-LDFLAGS = 
+LIB = -losrm -lpthread -lboost_system -lboost_filesystem -lboost_thread -lrt -ltbb
+LDFLAGS =
 
 MAKE_PID := $(shell echo $$PPID)
 JOB_FLAG := $(filter -j%, $(subst -j ,-j,$(shell ps T | grep "^\s*$(MAKE_PID).*$(MAKE)")))
 
-INC_RELEASE = $(INC) -Iinclude
+OSRM_OUT_DIR_RELEASE = osrm-backend/build/release
+INC_RELEASE = $(INC) -Iinclude -Iosrm-backend/include -Iosrm-backend/third_party
 CFLAGS_RELEASE = $(CFLAGS) -std=c++11
 RESINC_RELEASE = $(RESINC)
 RCFLAGS_RELEASE = $(RCFLAGS)
 LIBDIR_RELEASE = $(LIBDIR)
-LIB_RELEASE = $(LIB)-lpthread -losrm -lboost_system -lboost_filesystem -lboost_thread -lrt
+LIB_RELEASE = $(LIB) -L$(OSRM_OUT_DIR_RELEASE)
 LDFLAGS_RELEASE = $(LDFLAGS)
 OBJDIR_RELEASE = .objs
 DEP_RELEASE = 
 OUT_RELEASE = bin/release/osrmd
-OSRM_OUT_DIR_RELEASE = osrm-backend/build/release
 
 
-INC_DEBUG = $(INC) -Iinclude
+OSRM_OUT_DIR_DEBUG = osrm-backend/build/debug
+INC_DEBUG = $(INC) -Iinclude -Iosrm-backend/include -Iosrm-backend/third_party
 CFLAGS_DEBUG = $(CFLAGS) -std=c++11 -g
 RESINC_DEBUG = $(RESINC)
 RCFLAGS_DEBUG = $(RCFLAGS)
-LIBDIR_DEBUG = $(LIBDIR)
-LIB_DEBUG = $(LIB)-lpthread -losrm -lboost_system -lboost_filesystem -lboost_thread -lrt
+LIBDIR_DEBUG = $(LIBDIR) 
+LIB_DEBUG = $(LIB) -L$(OSRM_OUT_DIR_DEBUG)
 LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = .objs
 DEP_DEBUG = 
 OUT_DEBUG = bin/debug/osrmd
-OSRM_OUT_DIR_DEBUG = osrm-backend/build/debug
 
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/src/ClientThread.o $(OBJDIR_RELEASE)/src/ini-reader/INIReader.o $(OBJDIR_RELEASE)/src/ini-reader/ini.o $(OBJDIR_RELEASE)/src/logger/log.o $(OBJDIR_RELEASE)/src/osrmd.o $(OBJDIR_RELEASE)/src/socket/Server.o $(OBJDIR_RELEASE)/src/socket/UnixServer.o
@@ -74,9 +74,9 @@ before_release:
 
 after_release: 
 
-release: osrm_release before_release out_release after_release
+release: before_release out_release after_release
 
-out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
+out_release: before_release osrm_release $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
 
 $(OBJDIR_RELEASE)/src/ClientThread.o: src/ClientThread.cpp
@@ -118,9 +118,9 @@ before_debug:
 
 after_debug: 
 
-debug: osrm_debug before_debug out_debug after_debug
+debug: before_debug osrm_debug out_debug after_debug
 
-out_debug: before_debug $(OBJ_DEBUG) $(DEP_DEBUG)
+out_debug: before_debug osrm_debug $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) -o $(OUT_DEBUG) $(OBJ_DEBUG)  $(LDFLAGS_DEBUG) $(LIB_DEBUG)
 
 $(OBJDIR_DEBUG)/src/ClientThread.o: src/ClientThread.cpp
