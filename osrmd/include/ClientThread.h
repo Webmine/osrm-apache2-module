@@ -23,6 +23,7 @@ public:
 private:
     void RunOsrmQuery();
     Server* server;
+    osrm::engine::EngineConfig engineConfig;
     osrm::OSRM* osrmEngine;
     int client;
 };

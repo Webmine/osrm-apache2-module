@@ -9,7 +9,7 @@
 void interrupt(int);
 UnixServer* server;
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) try
 {
     // setup handler for Control-C so we can properly unlink the UNIX
     // socket when that occurs
@@ -67,12 +67,17 @@ int main(int argc, char **argv)
     if(populate_server_paths(osrm_file_name, config.server_paths) == 1)
         return 1;
 
-    config.use_shared_memory = false;
+    config.use_shared_memory = true;
 
     server = new UnixServer(socket_name);
     server->run(thread_pool_size, config);
 
     delete server;
+}
+catch(const std::exception &e)
+{
+    std::cout << "anyád";
+
 }
 
 void interrupt(int)
