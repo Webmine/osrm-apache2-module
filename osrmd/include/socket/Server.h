@@ -26,7 +26,7 @@ public:
     Server();
     virtual ~Server();
 
-    void run(int pool_size/*, EngineConfig& config*/);
+    void run(int pool_size, EngineConfig& config);
     static string get_request(int);
     static void send_response(int, const char*);
 

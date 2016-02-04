@@ -13,7 +13,7 @@
 /// <summary> Constructors a new work queue object. </summary>
 /// <param name="numWorkers"> (Optional) number of workers, less than 1 to
 ///     auto-detect (may fail on esoteric platforms). </param>
-WorkQueue::WorkQueue(int numWorkers)
+WorkQueue::WorkQueue(EngineConfig& engineConfig, int numWorkers)
 {
     if (numWorkers < 1)
     {
@@ -26,6 +26,8 @@ WorkQueue::WorkQueue(int numWorkers)
     {
         m_workers.emplace_back(std::thread(&WorkQueue::doWork, this));
     }
+
+    this->osrmEngine = new osrm::OSRM(engineConfig);
 }
 
 /// <summary> Will abort all pending jobs and run any in-progress jobs to
@@ -33,6 +35,7 @@ WorkQueue::WorkQueue(int numWorkers)
 WorkQueue::~WorkQueue()
 {
     abort();
+    delete osrmEngine;
 }
 
 /// <summary> Stops work queue and finishes jobs currently being executed.

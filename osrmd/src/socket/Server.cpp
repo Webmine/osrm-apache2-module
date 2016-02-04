@@ -15,9 +15,9 @@ Server::~Server()
     workers->waitForCompletion();
 }
 
-void Server::run(int pool_size  /*, EngineConfig& config*/)
+void Server::run(int pool_size , EngineConfig& config)
 {
-    workers = new WorkQueue(pool_size);
+    workers = new WorkQueue(config, pool_size);
     // create and run the server
     create();
     serve();
@@ -91,19 +91,21 @@ void Server::send_response(int client, const char* response)
         {
             if (errno == EINTR)
             {
+                LOG_TRACE("Socket write interrupted on client %d, retrying...", client);
                 // the socket call was interrupted -- try again
                 continue;
             }
             else
             {
                 // an error occurred, so break out
-                LOG_ERROR("write error");
+                LOG_ERROR("Socket write error on client %d", client);
                 return;
             }
         }
         else if (nwritten == 0)
         {
             // the socket is closed
+            LOG_DEBUG("Client %d disconnected.", client);
             return;
         }
         nleft -= nwritten;

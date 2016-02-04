@@ -7,6 +7,8 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
+#include "osrm/osrm.hpp"
+#include "osrm/engine_config.hpp"
 
 /// <summary> A typical thread worker queue that can execute arbitrary jobs.
 /// </summary>
@@ -15,7 +17,7 @@ class WorkQueue
 {
 
 public:
-    WorkQueue(int numWorkers = -1);
+    WorkQueue(osrm::engine::EngineConfig& engineConfig, int numWorkers = -1);
     ~WorkQueue();
     void abort();
     void stop();
@@ -29,6 +31,7 @@ private:
     std::atomic<bool> m_exit{ false };
     std::atomic<bool> m_finish_work{ true };
     std::vector<std::thread> m_workers;
+    osrm::OSRM* osrmEngine;
 
     void doWork();
     void joinAll();
