@@ -48,15 +48,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="include/BaseThread.h" />
-		<Unit filename="include/ClientThread.h" />
+		<Unit filename="include/WorkerQueue.h" />
 		<Unit filename="include/ini-reader/INIReader.h" />
 		<Unit filename="include/ini-reader/ini.h" />
 		<Unit filename="include/logger/log.h" />
 		<Unit filename="include/logger/macro_define.h" />
 		<Unit filename="include/socket/Server.h" />
 		<Unit filename="include/socket/UnixServer.h" />
-		<Unit filename="src/ClientThread.cpp" />
+		<Unit filename="src/WorkerQueue.cpp" />
 		<Unit filename="src/ini-reader/INIReader.cpp" />
 		<Unit filename="src/ini-reader/ini.c">
 			<Option compilerVar="CC" />
@@ -70,6 +69,7 @@
 			<debugger>
 				<search_path add="bin/debug" />
 			</debugger>
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

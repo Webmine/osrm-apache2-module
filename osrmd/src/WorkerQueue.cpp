@@ -131,22 +131,22 @@ void WorkQueue::handleClient(int client)
     if (!request.empty())
     {
 
-//            RouteParameters route_parameters;
-//            route_parameters.geometry = true;
-//            route_parameters.service = "viaroute";
-//            route_parameters.output_format = "json";
-//
-//            route_parameters.coordinates.emplace_back(47.49744 * COORDINATE_PRECISION, 19.03584 * COORDINATE_PRECISION);
-//            route_parameters.coordinates.emplace_back(47.50479 * COORDINATE_PRECISION, 19.14778 * COORDINATE_PRECISION);
-//
-//            osrm::json::Object json_result;
-//            const int result_code = osrmEngine->RunQuery(route_parameters, json_result);
-//
-//            std::vector<char> response;
-//            osrm::json::render(response, json_result);
+        RouteParameters route_parameters;
+        route_parameters.geometry = true;
+        route_parameters.service = "viaroute";
+        route_parameters.output_format = "json";
 
-        //send response  &*response.begin()
-        Server::send_response(client,"anyad");
+        route_parameters.coordinates.emplace_back(47.49744 * COORDINATE_PRECISION, 19.03584 * COORDINATE_PRECISION);
+        route_parameters.coordinates.emplace_back(47.50479 * COORDINATE_PRECISION, 19.14778 * COORDINATE_PRECISION);
+
+        osrm::json::Object json_result;
+        const int result_code = osrmEngine->RunQuery(route_parameters, json_result);
+
+        std::vector<char> response;
+        osrm::json::render(response, json_result);
+
+        //send response
+        Server::send_response(client,&*response.begin());
     }
 
     close(client);
