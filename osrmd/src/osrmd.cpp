@@ -70,17 +70,22 @@ int main(int argc, char **argv) try
     config.use_shared_memory = true;
 
     server = new UnixServer(socket_name);
-    server->run(thread_pool_size, config);
+    server->run(thread_pool_size /*, config*/);
 
+
+    server->close_socket();
     delete server;
 }
 catch(const std::exception &e)
 {
     std::cout << "anyád";
 
+    server->close_socket();
+    delete server;
 }
 
 void interrupt(int)
 {
     server->close_socket();
+    delete server;
 }

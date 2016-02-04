@@ -39,7 +39,7 @@ void UnixServer::create()
       // convert the socket to listen for incoming connections
     if (listen(server_,SOMAXCONN) < 0)
     {
-        perror("listen");
+        LOG_ERROR("listen");
         exit(-1);
     }
 }

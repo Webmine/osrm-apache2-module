@@ -47,9 +47,9 @@ DEP_DEBUG =
 OUT_DEBUG = bin/debug/osrmd
 
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/src/ClientThread.o $(OBJDIR_RELEASE)/src/ini-reader/INIReader.o $(OBJDIR_RELEASE)/src/ini-reader/ini.o $(OBJDIR_RELEASE)/src/logger/log.o $(OBJDIR_RELEASE)/src/osrmd.o $(OBJDIR_RELEASE)/src/socket/Server.o $(OBJDIR_RELEASE)/src/socket/UnixServer.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/src/WorkerQueue.o $(OBJDIR_RELEASE)/src/ini-reader/INIReader.o $(OBJDIR_RELEASE)/src/ini-reader/ini.o $(OBJDIR_RELEASE)/src/logger/log.o $(OBJDIR_RELEASE)/src/osrmd.o $(OBJDIR_RELEASE)/src/socket/Server.o $(OBJDIR_RELEASE)/src/socket/UnixServer.o
 
-OBJ_DEBUG = $(OBJDIR_DEBUG)/src/ClientThread.o $(OBJDIR_DEBUG)/src/ini-reader/INIReader.o $(OBJDIR_DEBUG)/src/ini-reader/ini.o $(OBJDIR_DEBUG)/src/logger/log.o $(OBJDIR_DEBUG)/src/osrmd.o $(OBJDIR_DEBUG)/src/socket/Server.o $(OBJDIR_DEBUG)/src/socket/UnixServer.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/src/WorkerQueue.o $(OBJDIR_DEBUG)/src/ini-reader/INIReader.o $(OBJDIR_DEBUG)/src/ini-reader/ini.o $(OBJDIR_DEBUG)/src/logger/log.o $(OBJDIR_DEBUG)/src/osrmd.o $(OBJDIR_DEBUG)/src/socket/Server.o $(OBJDIR_DEBUG)/src/socket/UnixServer.o
 
 .ONESHELL:
 osrm_debug:
@@ -79,8 +79,8 @@ release: before_release out_release after_release
 out_release: before_release osrm_release $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
 
-$(OBJDIR_RELEASE)/src/ClientThread.o: src/ClientThread.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/ClientThread.cpp -o $(OBJDIR_RELEASE)/src/ClientThread.o
+$(OBJDIR_RELEASE)/src/WorkerQueue.o: src/WorkerQueue.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/WorkerQueue.cpp -o $(OBJDIR_RELEASE)/src/WorkerQueue.o
 
 $(OBJDIR_RELEASE)/src/ini-reader/INIReader.o: src/ini-reader/INIReader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/ini-reader/INIReader.cpp -o $(OBJDIR_RELEASE)/src/ini-reader/INIReader.o
@@ -123,8 +123,8 @@ debug: before_debug osrm_debug out_debug after_debug
 out_debug: before_debug osrm_debug $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) -o $(OUT_DEBUG) $(OBJ_DEBUG)  $(LDFLAGS_DEBUG) $(LIB_DEBUG)
 
-$(OBJDIR_DEBUG)/src/ClientThread.o: src/ClientThread.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/ClientThread.cpp -o $(OBJDIR_DEBUG)/src/ClientThread.o
+$(OBJDIR_DEBUG)/src/WorkerQueue.o: src/WorkerQueue.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/WorkerQueue.cpp -o $(OBJDIR_DEBUG)/src/WorkerQueue.o
 
 $(OBJDIR_DEBUG)/src/ini-reader/INIReader.o: src/ini-reader/INIReader.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/ini-reader/INIReader.cpp -o $(OBJDIR_DEBUG)/src/ini-reader/INIReader.o

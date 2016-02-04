@@ -11,7 +11,7 @@
 #include <string>
 #include <queue>
 
-#include "BaseThread.h"
+#include "WorkerQueue.h"
 #include "osrm/engine_config.hpp"
 
 using namespace osrm;
@@ -26,22 +26,16 @@ public:
     Server();
     virtual ~Server();
 
-    void run(int pool_size, EngineConfig& config);
-    string get_request(int);
-    bool send_response(int, string);
-    void OnThreadFinished(BaseThread* thread);
+    void run(int pool_size/*, EngineConfig& config*/);
+    static string get_request(int);
+    static void send_response(int, const char*);
 
 protected:
     virtual void create();
     virtual void close_socket();
     void serve();
 
-    queue<BaseThread*> idleThreads;
-    queue<int> waitingClients;
-    pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER; //mutex for clientqueue lock
-    pthread_mutex_t mtx2 = PTHREAD_MUTEX_INITIALIZER; //mutex for clientqueue lock
+    WorkQueue* workers;
     int server_;
-    int buflen_;
     int pool_size_;
-    char* buf_;
 };
