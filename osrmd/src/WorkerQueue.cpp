@@ -6,6 +6,7 @@
 #include "util/coordinate.hpp"
 #include "osrm/json_container.hpp"
 #include "util/json_renderer.hpp"
+#include "request_parser.h"
 
 #include <assert.h>
 
@@ -134,15 +135,19 @@ void WorkQueue::handleClient(int client)
     if (!request.empty())
     {
 
-        RouteParameters route_parameters;
-        route_parameters.geometry = true;
-        route_parameters.service = "viaroute";
-        route_parameters.output_format = "json";
-
-        route_parameters.coordinates.emplace_back(47.49744 * COORDINATE_PRECISION, 19.03584 * COORDINATE_PRECISION);
-        route_parameters.coordinates.emplace_back(47.50479 * COORDINATE_PRECISION, 19.14778 * COORDINATE_PRECISION);
+//        RouteParameters route_parameters;
+//        route_parameters.geometry = true;
+//        route_parameters.service = "viaroute";
+//        route_parameters.output_format = "json";
+//
+//        route_parameters.coordinates.emplace_back(47.49744 * COORDINATE_PRECISION, 19.03584 * COORDINATE_PRECISION);
+//        route_parameters.coordinates.emplace_back(47.50479 * COORDINATE_PRECISION, 19.14778 * COORDINATE_PRECISION);
+//
+        RouteParameters route_parameters = RequestParser::parseRequest(request);
 
         osrm::json::Object json_result;
+
+
         const int result_code = osrmEngine->RunQuery(route_parameters, json_result);
 
         std::vector<char> response;
