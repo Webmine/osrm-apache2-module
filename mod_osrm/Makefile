@@ -18,6 +18,8 @@ INCLUDES=-I./include/
 #LIBS=-Lmy/lib/dir -lmylib
 SRC = ./src/mod_osrm.c
 
+Release: local-shared-build
+
 #   the default target
 all: local-shared-build
 
