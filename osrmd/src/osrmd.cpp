@@ -5,6 +5,7 @@
 #include "osrm/engine_config.hpp"
 #include <string>
 #include <iostream>
+#include <signal.h>
 
 void interrupt(int);
 UnixServer* socketServer;
@@ -78,8 +79,6 @@ int main(int argc, char **argv) try
 }
 catch(const std::exception &e)
 {
-    std::cout << "anyád";
-
     socketServer->close_socket();
     delete socketServer;
 }

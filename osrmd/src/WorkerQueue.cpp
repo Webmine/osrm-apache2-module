@@ -8,6 +8,7 @@
 
 
 #include <assert.h>
+#include <signal.h>
 
 
 /// <summary> Constructors a new work queue object. </summary>
@@ -96,6 +97,7 @@ void WorkQueue::submit(int client)
 
 void WorkQueue::doWork()
 {
+    signal(SIGPIPE, SIG_IGN);
     std::unique_lock<std::mutex> ul(m_mutex);
     std::thread::id this_id = std::this_thread::get_id();
     while (!m_exit || (m_finish_work && !m_work.empty()))

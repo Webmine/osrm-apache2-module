@@ -49,13 +49,83 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <stdio.h>
+#include <netinet/in.h>
 
 
-char *communicateWithOSRMd(char* server, char* request)
+void sendBytes(int client, const void* bytes, int length)
+{
+    // prepare to send request
+    int nleft = length;
+
+
+    int nwritten;
+    // loop to be sure it is all sent
+    while (nleft)
+    {
+        if ((nwritten = send(client, bytes, nleft,0)) < 0)
+        {
+            if (errno == EINTR)
+            {
+                // the socket call was interrupted -- try again
+                continue;
+            }
+            else
+            {
+                // an error occurred, so break out
+                return;
+            }
+        }
+        else if (nwritten == 0)
+        {
+            // the socket is closed
+            return;
+        }
+        nleft -= nwritten;
+        bytes += nwritten;
+    }
+    return;
+}
+
+void sendRequest(int client, const char* request)
+{
+    int requestLength = htonl(strlen(request));
+    sendBytes(client, &requestLength, sizeof(int));
+    sendBytes(client, request, strlen(request));
+}
+
+void readBytes(int client, void* buffer, int length)
+{
+
+    int nread = recv(client,buffer,length,0);
+
+    if (nread < 0)
+    {
+        return;
+    }
+    else if (nread == 0)
+    {
+        // the socket is closed
+        return;
+    }
+
+    return;
+}
+
+char* getResponse(int client)
+{
+    int requestLength = 0;
+    readBytes(client,&requestLength, sizeof(int));
+    requestLength = ntohl(requestLength);
+
+    char* buffer =  malloc(requestLength);
+    readBytes(client, buffer, requestLength);
+    return buffer;
+}
+
+char* communicateWithOSRMd(const char* server, const char* request)
 {
     int client, servlen, bytesLenght;
     struct sockaddr_un server_address;
-    char buffer[1024];
 
     bzero((char *)&server_address, sizeof(server_address));
     server_address.sun_family = AF_UNIX;
@@ -68,15 +138,13 @@ char *communicateWithOSRMd(char* server, char* request)
     if(connect(client, (struct sockaddr *) &server_address, servlen) < 0)
         return 0; //error connecting
 
-    bzero(buffer, 1024);
-    strncpy(buffer, request, sizeof(buffer));
-    write(client, buffer, strlen(buffer));
+    sendRequest(client, request);
 
-    bzero(buffer, 1024);
-    bytesLenght = read(client, buffer, 1024);
-    close(socket);
+    char* response = getResponse(client);
 
-    return buffer;
+    close(client);
+
+    return response;
 }
 
 /*
@@ -116,26 +184,33 @@ static int mod_osrm_handler(request_rec *r)
     if (strcmp(r->handler, "osrm")) {
         return DECLINED;
     }
-    r->content_type = "text/html";
+    r->content_type = "application/json;charset=utf-8";
 
     if (!r->header_only)
     {
-        ap_rputs("The sample page from mod_osrm.c <br/>", r);
-        ap_rputs("You requested: ",r);
-        ap_rputs(r->uri,r);
+//        ap_rputs("The sample page from mod_osrm.c <br/>", r);
+//        ap_rputs("You requested: ",r);
+//
+//        //r->uri (ex.: /viaroute) without first character + "?" + r->args (ex.: loc=12.213,12.432)
+        int requestLength = strlen(r->uri) + strlen(r->args) + 1;
+        char queryString[requestLength];
+//
+        strcpy(queryString, r->uri);
+        strcat(queryString, "?");
+        strcat(queryString, r->args);
+//
+//        ap_rputs(queryString,r);
+//
+//        ap_rputs("<br/>",r);
+//        ap_rputs("Socket name: ",r);
+//        ap_rputs(config.osrmd_socket_path,r);
+//        ap_rputs("<br/>",r);
 
-        if(r->args)
-        {
-            ap_rputs("?",r);
-            ap_rputs(r->args,r);
-        }
+        char* response = communicateWithOSRMd(config.osrmd_socket_path,queryString);
 
-        ap_rputs("<br/>",r);
-        ap_rputs("Socket name: ",r);
-        ap_rputs(config.osrmd_socket_path,r);
-        ap_rputs("<br/>",r);
+        ap_rputs(response,r);
 
-        ap_rputs(communicateWithOSRMd("/tmp/unix-socket","test string"),r);
+        free(response);
     }
 
     return OK;

@@ -4,6 +4,7 @@
 #include "osrm/osrm.hpp"
 #include "logger/log.h"
 #include <cstring>
+#include <netinet/in.h>
 
 Server::Server()
 {
@@ -58,72 +59,79 @@ void Server::serve()
 
 string Server::get_request(int client)
 {
-    int requestLength = atoi(Server::get_bytes(client, 4));
-    char* request = Server::get_bytes(client, requestLength);
+    int length = 0;
+    Server::get_bytes(client, &length, sizeof(int));
+    int requestLength = ntohl(length);
+    char* request = new char[requestLength];
+
+    Server::get_bytes(client,request, requestLength);
     std::string str(request);
+
+    delete request;
     return str;
 }
 
-char* Server::get_bytes(int client, int length)
+void Server::get_bytes(int client,void* buffer, int length)
 {
-
-    char buffer [length];
     int nread = recv(client,buffer,length,0);
 
     if (nread < 0)
     {
         //cout << "DEBUG: connection closed" << client;
-        return "";
+        return;
     }
     else if (nread == 0)
     {
         // the socket is closed
         //cout << "DEBUG: connection closed" << client;
-        return "";
+        return;
     }
 
-    return buffer;
+    return;
 }
 
-void Server::send_response(int client, const char* response)
+void Server::send_bytes(int client, const void* bytes, int length)
 {
-    // prepare to send response
-    int nleft = strlen(response);
-
-    char* buffer = new char[4+nleft];
-    sprintf(buffer,"%d",nleft);
-    strcat(buffer, response);
+    // prepare to send request
+    int nleft = length;
 
 
-    nleft += 4;
     int nwritten;
     // loop to be sure it is all sent
     while (nleft)
     {
-        if ((nwritten = send(client, buffer, nleft, 0)) < 0)
+        if ((nwritten = send(client, bytes, nleft,0)) < 0)
         {
             if (errno == EINTR)
             {
-                LOG_TRACE("Socket write interrupted on client %d, retrying...", client);
                 // the socket call was interrupted -- try again
                 continue;
             }
             else
             {
                 // an error occurred, so break out
-                LOG_ERROR("Socket write error on client %d", client);
                 return;
             }
         }
         else if (nwritten == 0)
         {
             // the socket is closed
-            LOG_DEBUG("Client %d disconnected.", client);
             return;
         }
         nleft -= nwritten;
-        buffer += nwritten;
+        bytes += nwritten;
     }
-    delete buffer;
     return;
+}
+
+void Server::send_response(int client, const char* response)
+{
+    // prepare to send response
+    int responseLength = strlen(response);
+
+    int convertedLength = htonl(responseLength);
+    Server::send_bytes(client, &convertedLength, sizeof(convertedLength));
+
+    Server::send_bytes(client, response, responseLength);
+
 }
