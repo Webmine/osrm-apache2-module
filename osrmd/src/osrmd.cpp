@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <signal.h>
+#include <exception>
 
 void interrupt(int);
 UnixServer* socketServer;
@@ -47,6 +48,7 @@ int main(int argc, char **argv) try
     int thread_pool_size = reader.GetInteger("threading","pool_size",10);
     // osrm
     string osrm_file_name = reader.Get("osrm","file_name","UNDEFINED");
+    bool osrm_use_shared_memory = reader.GetBoolean("osrm", "use_shared_memory", true);
 
     // init logger
     log_init((LogLevel)log_level, log_file.c_str(), log_dir.c_str());
@@ -65,20 +67,28 @@ int main(int argc, char **argv) try
 
     EngineConfig config = EngineConfig();
 
-    if(populate_server_paths(osrm_file_name, config.server_paths) == 1)
-        return 1;
-
-    config.use_shared_memory = true;
+    if(osrm_use_shared_memory)
+    {
+        config.use_shared_memory = true;
+    }
+    else
+    {
+        if(populate_server_paths(osrm_file_name, config.server_paths) == 1)
+        {
+            LOG_ERROR("Error loading osrm files.");
+            return 1;
+        }
+    }
 
     socketServer = new UnixServer(socket_name);
     socketServer->run(thread_pool_size, config);
-
 
     socketServer->close_socket();
     delete socketServer;
 }
 catch(const std::exception &e)
 {
+    LOG_ERROR("Exception occured: %s", e.what());
     socketServer->close_socket();
     delete socketServer;
 }
