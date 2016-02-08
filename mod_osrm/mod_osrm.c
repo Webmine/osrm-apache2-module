@@ -192,25 +192,43 @@ static int mod_osrm_handler(request_rec *r)
 //        ap_rputs("You requested: ",r);
 //
 //        //r->uri (ex.: /viaroute) without first character + "?" + r->args (ex.: loc=12.213,12.432)
-        int requestLength = strlen(r->uri) + strlen(r->args) + 1;
-        char queryString[requestLength];
+
+        if(r->args)
+        {
+            int requestLength = strlen(r->uri) + strlen(r->args) + 1;
+            char queryString[requestLength];
+
+            strcpy(queryString, r->uri);
+            strcat(queryString, "?");
+            strcat(queryString, r->args);
+
+            char* response = communicateWithOSRMd(config.osrmd_socket_path,queryString);
+
+            ap_rputs(response,r);
+
+            free(response);
+        }
+        else
+        {
+            r->status = 500;
+            ap_rputs("Bad Request",r);
+        }
+
+
+
 //
-        strcpy(queryString, r->uri);
-        strcat(queryString, "?");
-        strcat(queryString, r->args);
+//        if(r->args)
+//        {
+//            ap_rputs(r->args,r);
+//        }
 //
-//        ap_rputs(queryString,r);
 //
 //        ap_rputs("<br/>",r);
 //        ap_rputs("Socket name: ",r);
 //        ap_rputs(config.osrmd_socket_path,r);
 //        ap_rputs("<br/>",r);
 
-        char* response = communicateWithOSRMd(config.osrmd_socket_path,queryString);
 
-        ap_rputs(response,r);
-
-        free(response);
     }
 
     return OK;
