@@ -34,6 +34,7 @@ protected:
     virtual void create();
     virtual void close_socket();
     void serve();
+    static char* get_bytes(int client, int length);
 
     WorkQueue* workers;
     int server_;

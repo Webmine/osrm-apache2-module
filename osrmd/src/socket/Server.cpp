@@ -3,6 +3,7 @@
 #include <iostream>
 #include "osrm/osrm.hpp"
 #include "logger/log.h"
+#include <cstring>
 
 Server::Server()
 {
@@ -57,10 +58,17 @@ void Server::serve()
 
 string Server::get_request(int client)
 {
-    string request = "";
+    int requestLength = atoi(Server::get_bytes(client, 4));
+    char* request = Server::get_bytes(client, requestLength);
+    std::string str(request);
+    return str;
+}
 
-    char buffer [1025];
-    int nread = recv(client,buffer,1024,0);
+char* Server::get_bytes(int client, int length)
+{
+
+    char buffer [length];
+    int nread = recv(client,buffer,length,0);
 
     if (nread < 0)
     {
@@ -73,21 +81,26 @@ string Server::get_request(int client)
         //cout << "DEBUG: connection closed" << client;
         return "";
     }
-    // be sure to use append in case we have binary data
-    request.append(buffer,nread);
 
-    return request;
+    return buffer;
 }
 
 void Server::send_response(int client, const char* response)
 {
     // prepare to send response
     int nleft = strlen(response);
+
+    char* buffer = new char[4+nleft];
+    sprintf(buffer,"%d",nleft);
+    strcat(buffer, response);
+
+
+    nleft += 4;
     int nwritten;
     // loop to be sure it is all sent
     while (nleft)
     {
-        if ((nwritten = send(client, response, nleft, 0)) < 0)
+        if ((nwritten = send(client, buffer, nleft, 0)) < 0)
         {
             if (errno == EINTR)
             {
@@ -109,7 +122,8 @@ void Server::send_response(int client, const char* response)
             return;
         }
         nleft -= nwritten;
-        response += nwritten;
+        buffer += nwritten;
     }
+    delete buffer;
     return;
 }

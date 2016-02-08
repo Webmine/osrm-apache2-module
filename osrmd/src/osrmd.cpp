@@ -7,7 +7,7 @@
 #include <iostream>
 
 void interrupt(int);
-UnixServer* server;
+UnixServer* socketServer;
 
 int main(int argc, char **argv) try
 {
@@ -69,23 +69,23 @@ int main(int argc, char **argv) try
 
     config.use_shared_memory = true;
 
-    server = new UnixServer(socket_name);
-    server->run(thread_pool_size, config);
+    socketServer = new UnixServer(socket_name);
+    socketServer->run(thread_pool_size, config);
 
 
-    server->close_socket();
-    delete server;
+    socketServer->close_socket();
+    delete socketServer;
 }
 catch(const std::exception &e)
 {
     std::cout << "anyád";
 
-    server->close_socket();
-    delete server;
+    socketServer->close_socket();
+    delete socketServer;
 }
 
 void interrupt(int)
 {
-    server->close_socket();
-    delete server;
+    socketServer->close_socket();
+    delete socketServer;
 }

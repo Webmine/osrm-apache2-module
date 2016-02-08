@@ -9,6 +9,10 @@
 #include <atomic>
 #include "osrm/osrm.hpp"
 #include "osrm/engine_config.hpp"
+#include "osrm/route_parameters.hpp"
+#include "server/api_grammar.hpp"
+
+//template<typename Iterator, class HandlerT> struct APIGrammar;
 
 /// <summary> A typical thread worker queue that can execute arbitrary jobs.
 /// </summary>
@@ -32,6 +36,7 @@ private:
     std::atomic<bool> m_finish_work{ true };
     std::vector<std::thread> m_workers;
     osrm::OSRM* osrmEngine;
+    using ApiGrammarParser = osrm::server::APIGrammar<std::string::iterator, osrm::engine::RouteParameters>;
 
     void doWork();
     void joinAll();
