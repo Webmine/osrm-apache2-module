@@ -116,10 +116,16 @@ bool Log_Writer::log(LogLevel l, char* logformat,...)
 	_size = vsnprintf(star, _LOG_BUFFSIZE - prestrlen, logformat, args);
 	va_end(args);
 
-	if(NULL == fp)
-		fprintf(stderr, "%s", m_buffer);
+	if(NULL != fp)
+	{
+	    fprintf(stdout, "%s\n", m_buffer);
+        _write(m_buffer, prestrlen + _size);
+	}
 	else
-		_write(m_buffer, prestrlen + _size);
+    {
+        fprintf(stderr, "%s", m_buffer);
+    }
+
 	return true;
 }
 

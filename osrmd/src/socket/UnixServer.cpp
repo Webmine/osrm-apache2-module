@@ -42,6 +42,8 @@ void UnixServer::create()
         LOG_ERROR("listen");
         exit(-1);
     }
+
+    LOG_TRACE("Server started on: %s",socket_name);
 }
 
 void UnixServer::close_socket()

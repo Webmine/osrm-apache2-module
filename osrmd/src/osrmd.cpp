@@ -73,6 +73,7 @@ int main(int argc, char **argv) try
     }
     else
     {
+        config.use_shared_memory = false;
         if(populate_server_paths(osrm_file_name, config.server_paths) == 1)
         {
             LOG_ERROR("Error loading osrm files.");
