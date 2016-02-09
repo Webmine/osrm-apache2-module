@@ -1,5 +1,20 @@
 #! /bin/bash
+
+function clean_up {
+
+	echo -e "Y" | osrm-springclean
+	exit
+}
+
+trap clean_up SIGHUP SIGINT SIGTERM
+
+
+if [ "$#" -eq 2 ]
+then
+osrm-datastore $1
+fi
+
 while true
 do
-   osrmd 1>> /var/log/osrmd.log 2>&1
+   osrmd
 done
