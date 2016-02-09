@@ -40,7 +40,7 @@ class Log_Writer
 		~Log_Writer(){
 			logclose();
 		}
-		bool loginit(LogLevel l, const  char *filelocation, bool append = true, bool issync = false);
+		bool loginit(LogLevel l, const  char *filelocation, bool useconsole, bool append = true, bool issync = false);
 		bool log(LogLevel l,char *logformat,...);
 		LogLevel get_level();
 		bool logclose();
@@ -52,6 +52,7 @@ class Log_Writer
 	private:
 		enum LogLevel m_system_level;
 		FILE* fp;
+		bool m_useconsole;
 		bool m_issync;
 		bool m_isappend;
 		char m_filelocation[_LOG_PATH_LEN];
@@ -73,5 +74,5 @@ extern Log_Writer INFO_W;
  * p_modulename 模块名 如mysql
  * p_logdir  日志输出目录
  * */
-bool log_init(LogLevel l, const char* p_modulename, const char* p_logdir);
+bool log_init(LogLevel l, const char* p_modulename, const char* p_logdir, bool useconsole);
 #endif

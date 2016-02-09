@@ -28,7 +28,7 @@ int main(int argc, char **argv) try
     }
     else
     {
-        iniFilePath = "osrmd.ini";
+        iniFilePath = "/etc/osrmd/osrmd.ini";
     }
     INIReader reader(iniFilePath);
 
@@ -41,9 +41,10 @@ int main(int argc, char **argv) try
     // logger
     int log_level = reader.GetInteger("log","level",4); //default = warn
     string log_file = reader.Get("log","file_name","osrmd");
-    string log_dir = reader.Get("log","directory","./log");
+    string log_dir = reader.Get("log","directory","/var/log/osrmd");
+    bool log_console = reader.GetBoolean("log", "console_logging", true);
     // socket
-    string socket_name = reader.Get("socket","name","/tmp/unix-socket");
+    string socket_name = reader.Get("socket","name","/tmp/osrmd.sock");
     // threading
     int thread_pool_size = reader.GetInteger("threading","pool_size",10);
     // osrm
@@ -51,7 +52,7 @@ int main(int argc, char **argv) try
     bool osrm_use_shared_memory = reader.GetBoolean("osrm", "use_shared_memory", true);
 
     // init logger
-    log_init((LogLevel)log_level, log_file.c_str(), log_dir.c_str());
+    log_init((LogLevel)log_level, log_file.c_str(), log_dir.c_str(), log_console);
 
     /*
     //log examples

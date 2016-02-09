@@ -12,7 +12,7 @@ Log_Writer WARN_W;
 Log_Writer INFO_W;
 __thread char Log_Writer::m_buffer[_LOG_BUFFSIZE];
 
-bool log_init(LogLevel l, const char* p_modulename, const char* p_logdir)
+bool log_init(LogLevel l, const char* p_modulename, const char* p_logdir, bool useconsole)
 {
 	//如果路径存在文件夹，则判断是否存在
 	if (access (p_logdir, 0) == -1)
@@ -22,13 +22,13 @@ bool log_init(LogLevel l, const char* p_modulename, const char* p_logdir)
 	}
 	char _location_str[_LOG_PATH_LEN];
 	snprintf(_location_str, _LOG_PATH_LEN, "%s/%s.access", p_logdir, p_modulename);
-	INFO_W.loginit(l, _location_str);
+	INFO_W.loginit(l, _location_str, useconsole);
 	snprintf(_location_str, _LOG_PATH_LEN, "%s/%s.error", p_logdir, p_modulename);
 	//warning级别以上日志去WARN_W  去向由宏决定的 请见macro_define.h
 	if(l > LL_WARNING)
-		WARN_W.loginit(l, _location_str);
+		WARN_W.loginit(l, _location_str,useconsole);
 	else
-		WARN_W.loginit(LL_WARNING, _location_str);
+		WARN_W.loginit(LL_WARNING, _location_str,useconsole);
 	return true;
 }
 
@@ -57,9 +57,10 @@ bool Log_Writer::checklevel(LogLevel l)
 		return false;
 }
 
-bool Log_Writer::loginit(LogLevel l, const  char *filelocation, bool append, bool issync)
+bool Log_Writer::loginit(LogLevel l, const  char *filelocation, bool useconsole,  bool append, bool issync)
 {
 	MACRO_RET(NULL != fp, false);
+	m_useconsole = useconsole;
     m_system_level = l;
     m_isappend = append;
     m_issync = issync;
@@ -118,7 +119,11 @@ bool Log_Writer::log(LogLevel l, char* logformat,...)
 
 	if(NULL != fp)
 	{
-	    fprintf(stdout, "%s\n", m_buffer);
+	    if(m_useconsole)
+        {
+            fprintf(stdout, "%s\n", m_buffer);
+        }
+
         _write(m_buffer, prestrlen + _size);
 	}
 	else

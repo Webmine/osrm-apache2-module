@@ -236,7 +236,7 @@ static int mod_osrm_handler(request_rec *r)
 
 static void osrm_register_hooks(apr_pool_t *p)
 {
-    config.osrmd_socket_path = "/tmp/unix-socket";
+    config.osrmd_socket_path = "/tmp/osrmd.sock";
     ap_hook_handler(mod_osrm_handler, NULL, NULL, APR_HOOK_MIDDLE);
 }
 
