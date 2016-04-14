@@ -160,7 +160,7 @@ cleandebug:
 install_debug:
 	(cd $(OSRM_OUT_DIR_DEBUG) ; make install)
 	cp $(OUT_DEBUG) $(INSTALL_DIR_BIN)
-	chmod 766 $(INSTALL_DIR_BIN)
+	chmod 766 $(INSTALL_DIR_BIN)/osrmd
 	test -d $(INSTALL_DIR_CONF) || mkdir $(INSTALL_DIR_CONF)
 	cp ini/osrmd.ini $(INSTALL_DIR_CONF)/osrmd.ini
 	test -d $(INSTALL_DIR_LOG) || mkdir $(INSTALL_DIR_LOG)
@@ -173,7 +173,7 @@ install_debug:
 install_release:
 	(cd $(OSRM_OUT_DIR_RELEASE) ; make install)
 	cp $(OUT_RELEASE) $(INSTALL_DIR_BIN)
-	chmod 766 $(INSTALL_DIR_BIN)
+	chmod 766 $(INSTALL_DIR_BIN)/osrmd
 	test -d $(INSTALL_DIR_CONF) || mkdir $(INSTALL_DIR_CONF)
 	cp ini/osrmd.ini $(INSTALL_DIR_CONF)/osrmd.ini
 	test -d $(INSTALL_DIR_LOG) || mkdir $(INSTALL_DIR_LOG)
